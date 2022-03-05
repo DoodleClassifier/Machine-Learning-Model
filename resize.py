@@ -1,8 +1,12 @@
 import numpy as np
+from os import walk
 
-OBJECT = "HousePlant"
+# This file will automatically go into a directory called "raw_data" and convert all the numpy files to 1000 entries and save them in the "data" directory. The "raw_data" directory must be created locally as it is part of the .gitignore so I don't accidentally upload a gigabyte of data to github.
 
-data = np.load(f"./raw_data/{OBJECT}.npy")[:1000]
+filenames = next(walk("./raw_data/"), (None, None, []))[2]  # [] if no file
 
-np.save(f"./data/{OBJECT}.npy", data)
+for file in filenames:
+    data = np.load(f"./raw_data/{file}")[:1000]
+    np.save(f"./data/{file}", data)
 
+print(f"Found and resized {len(filenames)} files!")
