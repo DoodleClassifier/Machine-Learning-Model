@@ -23,9 +23,13 @@ for object in objects:
         object_data = np.load(f"./data/{objects[object]}.npy")
     else:
         object_data = np.load(f"./DoodleClassifierModel/data/{objects[object]}.npy")
+
+    # Add labels to data
+    temp = pd.DataFrame(object_data)
+    temp["Label"] = objects[object]
     
     # Append object data to main dataframe
-    data = data.append(pd.DataFrame(object_data), ignore_index=True)
+    data = data.append(temp, ignore_index=True)
 
 print(data)
 
