@@ -11,20 +11,14 @@ objects = {
     5: "HousePlant"
 }
 
-data = pd.DataFrame(columns=["X", "Y"])
+data = pd.DataFrame()
 
 # Load data from all npy files
 for object in objects:
     
     # Load the file and take first 1000 entries
-    object_data = np.load(f"./data/{objects[object]}.npy")[:1000]
-
-    # Add label tag to each entry
-    object_data = [[x, objects[object]] for x in object_data]
-
-    # Create temporary data frame to store new object data
-    temp = pd.DataFrame(object_data, columns=["X", "Y"])
-
+    object_data = np.load(f"./data/{objects[object]}.npy")
+    temp = pd.DataFrame(object_data)
     # Append temporary data frame to data
     data = data.append(temp, ignore_index=True)
 
@@ -44,15 +38,3 @@ print(data)
 
 # Win
 # print(data[0])
-
-
-
-
-
-
-
-
-
-model = RFC(100)
-
-model.fit
