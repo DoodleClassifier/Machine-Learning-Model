@@ -1,6 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier as RFC;
 import numpy as np
 import pandas as pd
+from os.path import exists
 
 objects = {
     0: "Bowtie",
@@ -16,11 +17,15 @@ data = pd.DataFrame()
 # Load data from all npy files
 for object in objects:
     
-    # Load the file and take first 1000 entries
-    object_data = np.load(f"./data/{objects[object]}.npy")
-    temp = pd.DataFrame(object_data)
-    # Append temporary data frame to data
-    data = data.append(temp, ignore_index=True)
+    # Load the numpy file
+    object_data = None
+    if exists(f"./data/{objects[object]}.npy"):
+        object_data = np.load(f"./data/{objects[object]}.npy")
+    else:
+        object_data = np.load(f"./DoodleClassifierModel/data/{objects[object]}.npy")
+    
+    # Append object data to main dataframe
+    data = data.append(pd.DataFrame(object_data), ignore_index=True)
 
 print(data)
 
