@@ -1,12 +1,12 @@
-from sklearn.ensemble import RandomForestClassifier as RFC;
+from sklearn.ensemble import RandomForestClassifier as RFC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import *
 import numpy as np
 import pandas as pd
 from os.path import exists
 import seaborn as sns
-import matplotlib.pyplot as plt 
-from matplotlib.ticker import MultipleLocator    
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
 
 objects = {
     0: "Bowtie",
@@ -28,29 +28,29 @@ data = pd.DataFrame()
 
 # Load data from all npy files
 for object in objects:
-    
+
     # Load the numpy file
     object_data = None
     if exists(f"./data/{objects[object]}.npy"):
         object_data = np.load(f"./data/{objects[object]}.npy")
     else:
-        object_data = np.load(f"./DoodleClassifierModel/data/{objects[object]}.npy")
+        object_data = np.load(
+            f"./DoodleClassifierModel/data/{objects[object]}.npy")
 
     # Add labels to data
     temp = pd.DataFrame(object_data)
     temp["Label"] = object
-    
+
     # Append object data to main dataframe
-    data = data.append(temp, ignore_index=True)
+    data = pd.concat([data, temp], ignore_index=True)
 
 
 # Train test validation split
-x_train, x_test, y_train, y_test = train_test_split(data.loc[:, data.columns != "Label"], data["Label"], test_size=0.33, random_state=69)
+x_train, x_test, y_train, y_test = train_test_split(
+    data.loc[:, data.columns != "Label"], data["Label"], test_size=0.33, random_state=69)
 
 model = RFC(n_estimators=100, max_depth=None, random_state=420)
-
 model.fit(x_train, y_train)
-
 predictions = model.predict(x_test)
 
 def show_confusion_matrix():
@@ -66,9 +66,9 @@ def show_confusion_matrix():
     ax = fig.add_subplot(1, 1, 1)
     cax = ax.matshow(cm)
     plt.title('Confusion matrix of the classifier')
-    
+
     fig.colorbar(cax)
-    
+
     # "If you have more than a few categories, Matplotlib decides to label the axes incorrectly - you have to force it to label every cell." - https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
     ax.xaxis.set_major_locator(MultipleLocator(1))
     ax.yaxis.set_major_locator(MultipleLocator(1))
@@ -82,4 +82,10 @@ def show_confusion_matrix():
     plt.show()
 
 
-# show_confusion_matrix()
+show_confusion_matrix()
+
+def make_prediction(pred):
+    """Makes a prediction using the model, takes in a pandas series, aka a single row from a pandas df, or an array of the pixel values"""
+    return model.predict_proba(pred)
+
+print(make_prediction([data.iloc[2001].drop("Label")]))
