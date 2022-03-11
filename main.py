@@ -7,6 +7,7 @@ from os.path import exists
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+import gradio as gr
 
 objects = {
     0: "Bowtie",
@@ -82,10 +83,26 @@ def show_confusion_matrix():
     plt.show()
 
 
-show_confusion_matrix()
+# show_confusion_matrix()
 
 def make_prediction(pred):
     """Makes a prediction using the model, takes in a pandas series, aka a single row from a pandas df, or an array of the pixel values"""
     return model.predict_proba(pred)
 
-print(make_prediction([data.iloc[2001].drop("Label")]))
+# print(make_prediction([data.iloc[2001].drop("Label")]))
+
+# Save the model in a .pkl
+import pickle
+
+# with open('model.pkl','wb') as f:
+#     pickle.dump(model, f)
+
+
+def classify(input):
+    data = input.reshape(1, -1)
+    prediction = model.predict_proba(data).tolist()[0]
+    return {f"{objects[i]} ({i})": prediction[i] for i in range(len(objects))}
+
+label = gr.outputs.Label(num_top_classes=len(objects), type="confidences")
+interface = gr.Interface(fn=classify, inputs="sketchpad", outputs=label, live=True)
+interface.launch()
