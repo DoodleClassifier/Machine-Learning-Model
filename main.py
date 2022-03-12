@@ -94,15 +94,15 @@ def make_prediction(pred):
 # Save the model in a .pkl
 import pickle
 
-# with open('model.pkl','wb') as f:
-#     pickle.dump(model, f)
+with open('model.pkl','wb') as f:
+    pickle.dump(model, f)
 
+# Code to generate gradio webpage to actively test model. Not enough customization to satisfy me.
+# def classify(input):
+#     data = input.reshape(1, -1)
+#     prediction = model.predict_proba(data).tolist()[0]
+#     return {f"{objects[i]} ({i})": prediction[i] for i in range(len(objects))}
 
-def classify(input):
-    data = input.reshape(1, -1)
-    prediction = model.predict_proba(data).tolist()[0]
-    return {f"{objects[i]} ({i})": prediction[i] for i in range(len(objects))}
-
-label = gr.outputs.Label(num_top_classes=len(objects), type="confidences")
-interface = gr.Interface(fn=classify, inputs="sketchpad", outputs=label, live=True)
-interface.launch()
+# label = gr.outputs.Label(num_top_classes=len(objects), type="confidences")
+# interface = gr.Interface(fn=classify, inputs="sketchpad", outputs=label, live=True)
+# interface.launch()
